@@ -19,9 +19,13 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.className}>
         <header className="border-b">
-          <nav className="mx-auto max-w-6xl flex items-center gap-4 p-4 text-sm">
+          <nav className="mx-auto max-w-6xl flex flex-wrap items-center gap-4 p-4 text-sm">
             <Link href="/">Storefront</Link>
+            <Link href="/products">Products</Link>
+            <Link href="/products/new">New Product</Link>
             <Link href="/admin">Admin</Link>
+            <Link href="/admin/tenants">Tenants</Link>
+            <Link href="/admin/tenants/new">New Tenant</Link>
             <Link href="/vendor">Vendor</Link>
             <Link href="/wms">WMS</Link>
             <Link href="/support">Support</Link>
