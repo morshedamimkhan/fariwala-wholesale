@@ -1,0 +1,17 @@
+{
+  "name": "@pkg/db",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "generate": "prisma generate",
+    "db:push": "prisma db push"
+  },
+  "devDependencies": {
+    "prisma": "5.16.2"
+  },
+  "dependencies": {
+    "@prisma/client": "5.16.2",
+    "zod": "3.23.8"
+  }
+}
