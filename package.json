@@ -8,7 +8,8 @@
   ],
   "scripts": {
     "dev": "concurrently -n web,api -c blue,magenta \"npm run -w @app/web dev\" \"npm run -w @app/api dev\"",
-    "build": "npm run -w @app/web build && npm run -w @app/api build",
+    "build": "npm run -w @pkg/db build && npm run -w @app/web build && npm run -w @app/api build",
+    "db:gen": "npm run -w @pkg/db generate",
     "lint": "npm run -w @app/web lint || true"
   },
   "devDependencies": {
