@@ -1,0 +1,148 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id          String     @id @default(cuid())
+  name        String
+  domain      String     @unique
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  users       User[]
+  products    Product[]
+  warehouses  Warehouse[]
+  inventories Inventory[]
+  carts       Cart[]
+  orders      Order[]
+}
+
+model User {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String?
+  tenantId    String
+  tenant      Tenant   @relation(fields: [tenantId], references: [id])
+  role        String   @default("customer")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Product {
+  id          String    @id @default(cuid())
+  tenantId    String
+  tenant      Tenant    @relation(fields: [tenantId], references: [id])
+  sku         String    @unique
+  title       String
+  description String?
+  priceCents  Int
+  currency    String    @default("USD")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  inventories Inventory[]
+  cartItems   CartItem[]
+  orderItems  OrderItem[]
+}
+
+model Warehouse {
+  id          String    @id @default(cuid())
+  tenantId    String
+  tenant      Tenant    @relation(fields: [tenantId], references: [id])
+  name        String
+  location    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  inventories Inventory[]
+}
+
+model Inventory {
+  id           String    @id @default(cuid())
+  tenantId     String
+  tenant       Tenant    @relation(fields: [tenantId], references: [id])
+  productId    String
+  product      Product   @relation(fields: [productId], references: [id])
+  warehouseId  String
+  warehouse    Warehouse @relation(fields: [warehouseId], references: [id])
+  qtyOnHand    Int       @default(0)
+  qtyReserved  Int       @default(0)
+  updatedAt    DateTime  @updatedAt
+  @@unique([productId, warehouseId])
+}
+
+model Cart {
+  id          String     @id @default(cuid())
+  tenantId    String
+  tenant      Tenant     @relation(fields: [tenantId], references: [id])
+  userId      String?
+  currency    String     @default("USD")
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  items       CartItem[]
+}
+
+model CartItem {
+  id          String   @id @default(cuid())
+  cartId      String
+  cart        Cart     @relation(fields: [cartId], references: [id])
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  sku         String
+  qty         Int
+  priceCents  Int
+  currency    String   @default("USD")
+  createdAt   DateTime @default(now())
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  tenantId    String
+  tenant      Tenant      @relation(fields: [tenantId], references: [id])
+  userId      String?
+  status      String      @default("created")
+  totalCents  Int         @default(0)
+  currency    String      @default("USD")
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  items       OrderItem[]
+  shipments   Shipment[]
+  payments    Payment[]
+}
+
+model OrderItem {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id])
+  productId   String
+  product     Product  @relation(fields: [productId], references: [id])
+  sku         String
+  qty         Int
+  priceCents  Int
+  currency    String   @default("USD")
+}
+
+model Shipment {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id])
+  carrier     String?
+  tracking    String?
+  status      String   @default("pending")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Payment {
+  id          String   @id @default(cuid())
+  orderId     String
+  order       Order    @relation(fields: [orderId], references: [id])
+  provider    String
+  status      String   @default("pending")
+  amountCents Int
+  currency    String   @default("USD")
+  externalId  String?
+  createdAt   DateTime @default(now())
+}

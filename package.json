@@ -1,0 +1,19 @@
+{
+  "name": "multi-tenant-marketplace",
+  "private": true,
+  "version": "0.1.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "concurrently -n web,api -c blue,magenta \"npm run -w @app/web dev\" \"npm run -w @app/api dev\"",
+    "build": "npm run -w @pkg/db build && npm run -w @app/web build && npm run -w @app/api build",
+    "db:gen": "npm run -w @pkg/db generate",
+    "lint": "npm run -w @app/web lint || true"
+  },
+  "devDependencies": {
+    "concurrently": "8.2.2",
+    "prettier": "3.3.3"
+  }
+}
